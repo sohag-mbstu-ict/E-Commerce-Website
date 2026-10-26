@@ -1,0 +1,55 @@
+# ------------------------------------------------------------------
+# Secrets & local settings - never commit these
+# ------------------------------------------------------------------
+.env
+.env.*
+!.env.example
+
+# ------------------------------------------------------------------
+# Django
+# ------------------------------------------------------------------
+# Local database (each developer/server has its own)
+db.sqlite3
+db.sqlite3-journal
+*.sqlite3
+
+# User uploads (product photos etc.) - back these up separately
+/media/
+
+# Output of `python manage.py collectstatic`
+/staticfiles/
+
+*.log
+
+# ------------------------------------------------------------------
+# Python
+# ------------------------------------------------------------------
+__pycache__/
+*.py[cod]
+*$py.class
+*.egg-info/
+build/
+dist/
+
+# Virtual environments
+.venv/
+venv/
+env/
+
+# Test / coverage / type-checker output
+.pytest_cache/
+.coverage
+.coverage.*
+htmlcov/
+.mypy_cache/
+.ruff_cache/
+
+# ------------------------------------------------------------------
+# Editors & operating systems
+# ------------------------------------------------------------------
+.vscode/
+.idea/
+*.swp
+.DS_Store
+Thumbs.db
+desktop.ini

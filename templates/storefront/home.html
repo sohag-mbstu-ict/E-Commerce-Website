@@ -1,0 +1,89 @@
+{% extends 'base.html' %}
+{% block title %}MyShop - Shop Everything You Need{% endblock %}
+
+{% block content %}
+
+{% if hero_slides %}
+<div id="heroCarousel" class="carousel slide mb-5" data-bs-ride="carousel">
+    <div class="carousel-inner">
+        {% for slide in hero_slides %}
+        <div class="carousel-item {% if forloop.first %}active{% endif %}">
+            <div class="hero-slide" style="background: {{ slide.gradient_css }}; color: {{ slide.text_color }};">
+                <div>
+                    <h2>{{ slide.heading }}</h2>
+                    {% if slide.subheading %}<p class="fs-5">{{ slide.subheading }}</p>{% endif %}
+                    {% if slide.cta_text %}
+                    <a href="{{ slide.cta_url|default:'#' }}" class="btn btn-light btn-lg mt-2">{{ slide.cta_text }}</a>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+    {% if hero_slides|length > 1 %}
+    <button class="carousel-control-prev" type="button" data-bs-target="#heroCarousel" data-bs-slide="prev">
+        <span class="carousel-control-prev-icon"></span>
+    </button>
+    <button class="carousel-control-next" type="button" data-bs-target="#heroCarousel" data-bs-slide="next">
+        <span class="carousel-control-next-icon"></span>
+    </button>
+    <div class="carousel-indicators">
+        {% for slide in hero_slides %}
+        <button type="button" data-bs-target="#heroCarousel" data-bs-slide-to="{{ forloop.counter0 }}" class="{% if forloop.first %}active{% endif %}"></button>
+        {% endfor %}
+    </div>
+    {% endif %}
+</div>
+{% else %}
+<div class="p-5 mb-5 bg-body-tertiary rounded-3 hero">
+    <div class="container-fluid py-4">
+        <h1 class="display-6 fw-bold">Everything you need, delivered fast.</h1>
+        <p class="col-md-8 fs-5">Browse our full catalog - quality products, fair prices.</p>
+        <a class="btn btn-primary btn-lg" href="{% url 'storefront:product_list' %}">Shop Now</a>
+        <p class="small text-muted mt-3">Tip: run <code>python manage.py seed_homepage_content</code> to enable the hero slider.</p>
+    </div>
+</div>
+{% endif %}
+
+{% if categories %}
+<h4 class="mb-3">Shop by Category</h4>
+<div class="row g-3 mb-5">
+    {% for cat in categories %}
+    <div class="col-6 col-md-4 col-lg-{% if forloop.counter <= 3 %}4{% else %}3{% endif %}">
+        <a href="{% url 'storefront:product_list' %}?category={{ cat.slug }}"
+           class="category-tile {% if forloop.counter > 3 %}category-tile-sm{% endif %} {% cycle 'cat-color-1' 'cat-color-2' 'cat-color-3' 'cat-color-4' 'cat-color-5' 'cat-color-6' %}">
+            {{ cat.name }}
+        </a>
+    </div>
+    {% endfor %}
+</div>
+{% endif %}
+
+{% if promo_banners %}
+{% for banner in promo_banners %}
+<div class="promo-banner mb-5" style="background: {{ banner.gradient_css }}; color: {{ banner.text_color }};">
+    <h3 class="fw-bold">{{ banner.heading }}</h3>
+    {% if banner.subheading %}<p class="fs-5">{{ banner.subheading }}</p>{% endif %}
+    {% if banner.cta_text %}<a href="{{ banner.cta_url|default:'#' }}" class="btn btn-light mt-2">{{ banner.cta_text }}</a>{% endif %}
+</div>
+{% endfor %}
+{% endif %}
+
+{% if featured_products %}
+<h4 class="mb-3">Featured Products</h4>
+<div class="row g-3 mb-5">
+    {% for product in featured_products %}
+        {% include 'partials/product_card.html' %}
+    {% endfor %}
+</div>
+{% endif %}
+
+<h4 class="mb-3">Latest Arrivals</h4>
+<div class="row g-3">
+    {% for product in latest_products %}
+        {% include 'partials/product_card.html' %}
+    {% empty %}
+    <p class="text-muted">No products yet. Run <code>python manage.py seed_demo_data</code> to add demo products.</p>
+    {% endfor %}
+</div>
+{% endblock %}

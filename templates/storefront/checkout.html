@@ -1,0 +1,61 @@
+{% extends 'base.html' %}
+{% load humanize %}
+{% block title %}Checkout - MyShop{% endblock %}
+
+{% block content %}
+<h3 class="mb-4">Checkout</h3>
+<div class="row">
+    <div class="col-lg-7">
+        <form method="post">
+            {% csrf_token %}
+            <div class="card mb-3">
+                <div class="card-body">
+                    <h6 class="card-title">Shipping Details</h6>
+                    <div class="row g-2">
+                        <div class="col-md-6">{{ form.full_name.label_tag }} {{ form.full_name }}</div>
+                        <div class="col-md-6">{{ form.phone.label_tag }} {{ form.phone }}</div>
+                        <div class="col-md-6">{{ form.email.label_tag }} {{ form.email }}</div>
+                        <div class="col-12">{{ form.address_line.label_tag }} {{ form.address_line }}</div>
+                        <div class="col-md-4">{{ form.city.label_tag }} {{ form.city }}</div>
+                        <div class="col-md-4">{{ form.postal_code.label_tag }} {{ form.postal_code }}</div>
+                        <div class="col-md-4">{{ form.country.label_tag }} {{ form.country }}</div>
+                        <div class="col-12">{{ form.note.label_tag }} {{ form.note }}</div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="card mb-3">
+                <div class="card-body">
+                    <h6 class="card-title">Payment Method</h6>
+                    {{ form.payment_method }}
+                    {% if form.errors %}
+                    <div class="text-danger small mt-2">{{ form.errors }}</div>
+                    {% endif %}
+                </div>
+            </div>
+
+            <button type="submit" class="btn btn-primary w-100 btn-lg">Place Order</button>
+        </form>
+    </div>
+
+    <div class="col-lg-5">
+        <div class="card">
+            <div class="card-body">
+                <h6 class="card-title">Order Summary</h6>
+                {% for item in cart.items.all %}
+                <div class="d-flex justify-content-between small mb-2">
+                    <span>{{ item.quantity }} x {{ item.product.name }}{% if item.variant %} ({{ item.variant.label }}){% endif %}</span>
+                    <span>৳{{ item.line_total|intcomma }}</span>
+                </div>
+                {% endfor %}
+                <hr>
+                <div class="d-flex justify-content-between fw-bold fs-5">
+                    <span>Subtotal</span>
+                    <span>৳{{ cart.subtotal|intcomma }}</span>
+                </div>
+                <p class="small text-muted mt-2">Shipping fee is added on the confirmed order (free above ৳2000).</p>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

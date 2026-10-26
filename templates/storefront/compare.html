@@ -1,0 +1,87 @@
+{% extends 'base.html' %}
+{% load humanize %}
+{% block title %}Compare Products - MyShop{% endblock %}
+
+{% block content %}
+<div class="d-flex justify-content-between align-items-center mb-4">
+    <h3 class="mb-0">Compare Products</h3>
+    {% if products %}
+    <form method="post" action="{% url 'compare:clear' %}">
+        {% csrf_token %}
+        <button class="btn btn-sm btn-outline-danger">Clear All</button>
+    </form>
+    {% endif %}
+</div>
+
+{% if products %}
+<div class="table-responsive">
+    <table class="table table-bordered align-middle bg-white">
+        <thead>
+            <tr>
+                <th style="width:160px;">&nbsp;</th>
+                {% for product in products %}
+                <th class="text-center">
+                    <form method="post" action="{% url 'compare:remove' product.id %}" class="mb-2">
+                        {% csrf_token %}
+                        <button class="btn btn-sm btn-outline-secondary"><i class="bi bi-x"></i></button>
+                    </form>
+                    {% if product.thumbnail %}
+                    <img src="{{ product.thumbnail.url }}" style="width:100px;height:100px;object-fit:cover;" class="rounded border mb-2">
+                    {% endif %}
+                    <div><a href="{{ product.get_absolute_url }}">{{ product.name }}</a></div>
+                </th>
+                {% endfor %}
+            </tr>
+        </thead>
+        <tbody>
+            <tr>
+                <th>Price</th>
+                {% for product in products %}<td class="text-center fw-bold">৳{{ product.current_price|intcomma }}</td>{% endfor %}
+            </tr>
+            <tr>
+                <th>Category</th>
+                {% for product in products %}<td class="text-center">{{ product.category.name }}</td>{% endfor %}
+            </tr>
+            <tr>
+                <th>Rating</th>
+                {% for product in products %}<td class="text-center">{% if product.average_rating %}{{ product.average_rating }} / 5{% else %}No reviews{% endif %}</td>{% endfor %}
+            </tr>
+            <tr>
+                <th>Stock</th>
+                {% for product in products %}<td class="text-center">{% if product.in_stock %}In Stock ({{ product.stock }}){% else %}Out of Stock{% endif %}</td>{% endfor %}
+            </tr>
+{% load dict_extras %}
+            {% for attr_name in attribute_keys %}
+            <tr>
+                <th class="text-capitalize">{{ attr_name }}</th>
+                {% for product in products %}
+                <td class="text-center">
+                    {% for v in product.variants.all %}{% if attr_name in v.attributes %}{{ v.attributes|get_item:attr_name }}{% if not forloop.last %}, {% endif %}{% endif %}{% endfor %}
+                </td>
+                {% endfor %}
+            </tr>
+            {% endfor %}
+            <tr>
+                <th>&nbsp;</th>
+                {% for product in products %}
+                <td class="text-center">
+                    <form method="post" action="{% url 'storefront:cart_add' product.id %}">
+                        {% csrf_token %}
+                        <input type="hidden" name="next" value="{% url 'compare:view' %}">
+                        <button class="btn btn-sm btn-primary" {% if not product.in_stock %}disabled{% endif %}>Add to Cart</button>
+                    </form>
+                </td>
+                {% endfor %}
+            </tr>
+        </tbody>
+    </table>
+</div>
+<p class="text-muted small">You can compare up to {{ max_items }} products at a time.</p>
+{% else %}
+<div class="text-center py-5">
+    <i class="bi bi-arrow-left-right fs-1 text-secondary"></i>
+    <p class="mt-3 text-muted">You haven't added any products to compare yet.</p>
+    <a href="{% url 'storefront:product_list' %}" class="btn btn-primary">Browse Products</a>
+</div>
+{% endif %}
+{% endblock %}

@@ -1,0 +1,104 @@
+Each prompt below turns one uploaded photo into a clean product image for your shop. They all tell Nano Banana Pro to keep the product exactly as it is, because AI image tools tend to "improve" colors and patterns. If a customer receives something different from the photo, you get returns and bad reviews.
+
+## How to use them
+1. Open Gemini and select **Nano Banana Pro** (in Gemini, choose "Create image" with the Thinking/Pro model).
+2. Upload **one** product photo.
+3. Paste the matching prompt below and send it.
+4. If there's an aspect-ratio setting, choose **3:4** for all products (sharee, 3 piece and bangles) so the shop grid looks even.
+5. Download the result, compress it at squoosh.app (WebP or JPG, under 500 KB, 900 × 1200 px), give it a simple name like `jamdani-red.webp`, and upload it in the admin as described earlier.
+
+------------------------------------------------------------------------
+
+## 1. Sharee
+```
+Create a professional e-commerce product photo of the sharee in the uploaded image.
+
+PRESERVE EXACTLY (most important):
+- The exact colors, shade and saturation of the fabric — do not brighten, recolor or change the hue
+- The exact pattern, motifs, weave, border (paar) design, and anchal (pallu) design
+- Fabric texture and sheen (cotton, silk, jamdani, katan etc. must look like the original material)
+- Do not add, remove or redesign any embroidery, zari work or print
+
+PRESENTATION:
+- Show the sharee neatly draped on a faceless, elegant mannequin in the traditional Bengali style, with the pleats neatly arranged in front and the anchal falling over the left shoulder so the border and anchal design are clearly visible
+- Full-length view, sharee centered, filling about 85% of the frame height, with small even margins
+- Plain seamless background in soft light grey (#F2F2F2)
+- Soft, even studio lighting from the front with a gentle soft shadow under the mannequin; no harsh shadows, no color cast
+- Sharp focus on the fabric, high detail, true-to-life colors
+
+FORMAT:
+- Portrait 3:4 aspect ratio
+- No text, no watermark, no logo, no props, no jewelry, no other clothing items
+```
+
+**Option: flat-lay sharee** (if you don't want a mannequin), replace the PRESENTATION section with:
+```
+- Show the sharee as a neat flat-lay from directly above: fabric folded in elegant layers with the border running along the edge and a portion of the anchal fanned out so its design is clearly visible
+```
+
+
+
+------------------------------------------------------------------------
+## 2. 3 Piece (salwar kameez with dupatta)
+```
+Create a professional e-commerce product photo of the 3 piece outfit (kameez, salwar/pants, and dupatta) in the uploaded image.
+
+PRESERVE EXACTLY (most important):
+- The exact colors and shades of all three pieces — do not brighten, recolor or change the hue
+- The exact print, embroidery, neckline design, sleeve design, lace and border details
+- The original fabric type and texture (lawn, cotton, georgette etc.)
+- The original cut, length and fit of the kameez — do not redesign or restyle it
+- Do not add, remove or invent any embroidery, buttons, lace or patterns
+
+PRESENTATION:
+- Show the outfit on a faceless, slim mannequin: kameez worn properly, salwar/pants visible below, dupatta draped neatly over one shoulder or both shoulders so its design is visible
+- Full-length front view, outfit centered, filling about 85% of the frame height, with small even margins
+- Plain seamless background in soft light grey (#F2F2F2)
+- Soft, even studio lighting with a gentle soft shadow at the base; no harsh shadows, no color cast
+- Sharp focus, high detail on embroidery and print, true-to-life colors
+- Fabric should look neatly pressed with natural folds, no wrinkles
+
+FORMAT:
+- Portrait 3:4 aspect ratio
+- No text, no watermark, no logo, no props, no jewelry, no shoes, no extra clothing
+```
+
+**Tip:** If your upload shows only the kameez, add this line: `Only show the pieces visible in the uploaded photo — do not invent a dupatta or salwar.`
+
+
+
+
+------------------------------------------------------------------------
+## 3. Bangles
+```
+Create a professional e-commerce product photo of the bangles in the uploaded image.
+
+PRESERVE EXACTLY (most important):
+- The exact number of bangles, their thickness, shape and size proportions
+- The exact color and metal finish (gold plated, silver, rose gold, glass, etc.) — do not make plated metal look like solid gold
+- The exact stones, kundan work, enamel (meenakari), engraving and pattern — do not add or remove any stones or details
+- Glass bangles must keep their original colors and transparency
+
+PRESENTATION:
+- Arrange the bangles neatly: stacked upright together, slightly angled at about 30 degrees so both the top edge and the front design are visible
+- Bangles centered, filling about 70% of the frame, with even margins
+- Plain seamless background in soft light grey (#F2F2F2)
+- Soft diffused studio lighting with gentle natural reflections on the metal/glass and a subtle soft shadow beneath; no harsh glare, no blown-out highlights, no color cast
+- Macro-level sharpness, every stone and engraving crisp and clearly visible, true-to-life colors
+
+FORMAT:
+- Portrait 3:4 aspect ratio (bangles centered, with clean background space above and below)
+- No text, no watermark, no logo, no hands, no props, no fabric, no other jewelry
+```
+
+------------------------------------------------------------------------
+## Tips for good results
+- **Start with a good photo.** Use daylight near a window, no flash, and get the whole product in the frame. The AI can't recover details your photo doesn't show.
+- **Compare every result with the real product** before uploading, especially the color. If it has changed, reply:
+  `The color is wrong. Match the exact color of the original uploaded photo. Change nothing else.`
+- **Fixing a detail:** reply with one change at a time, for example `Make the border design exactly like in my original photo` or `Remove the extra stones you added`.
+- **Keep the shop consistent:** use the same prompt for every product in a category, so all photos have the same background, lighting and framing and the grid looks professional.
+- **Extra photos** (for the "Product images" section):
+  - Close-up of the fabric or pattern: `Same product, close-up of the fabric texture and border/embroidery detail, same background and lighting, 1:1 square`
+  - Back view: `Same product, back view, same mannequin, background and lighting, 3:4 portrait`
+- **Images generated in Gemini carry a SynthID watermark.** It's invisible and doesn't affect how the photo looks in your shop.

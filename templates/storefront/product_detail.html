@@ -1,0 +1,669 @@
+{% extends 'base.html' %}
+{% load humanize static %}
+{% block title %}{{ product.name }} - MyShop{% endblock %}
+{% block extra_head %}<link href="{% static 'css/product.css' %}" rel="stylesheet">{% endblock %}
+
+{% block content %}
+<nav aria-label="breadcrumb">
+    <ol class="breadcrumb small">
+        <li class="breadcrumb-item"><a href="{% url 'storefront:home' %}">Home</a></li>
+        <li class="breadcrumb-item"><a href="{% url 'storefront:product_list' %}?category={{ product.category.slug }}">{{ product.category.name }}</a></li>
+        <li class="breadcrumb-item active">{{ product.name }}</li>
+    </ol>
+</nav>
+
+<div class="row g-4 g-lg-5 pdp">
+    {# ------------------------------------------------------------------ #}
+    {# Gallery                                                            #}
+    {# ------------------------------------------------------------------ #}
+    <div class="col-lg-7">
+        {% if photos %}
+        <div class="pdp-gallery">
+            <div class="pdp-main">
+                <div class="product-zoom" id="productZoom" title="Click to view full screen">
+                    <img src="{{ photos.0.url }}" id="productMainImage" alt="{{ photos.0.alt }}">
+                    {% if product.discount_price %}<span class="pdp-ribbon">Sale</span>
+                    {% elif product.is_new %}<span class="pdp-ribbon">New</span>{% endif %}
+                    <span class="product-zoom-hint"><i class="bi bi-zoom-in"></i> <span class="d-none d-md-inline">Hover to zoom &middot; </span>Click to enlarge</span>
+                </div>
+                {% if photos|length > 1 %}
+                <button type="button" class="pdp-main-nav prev" id="mainPrev" aria-label="Previous photo"><i class="bi bi-chevron-left"></i></button>
+                <button type="button" class="pdp-main-nav next" id="mainNext" aria-label="Next photo"><i class="bi bi-chevron-right"></i></button>
+                <span class="pdp-counter" id="mainCounter">1 / {{ photos|length }}</span>
+                {% endif %}
+            </div>
+
+            {% if photos|length > 1 %}
+            <div class="pdp-thumbs-wrap">
+                <button type="button" class="pdp-thumbs-arrow prev" id="thumbsPrev" aria-label="Scroll thumbnails left"><i class="bi bi-chevron-left"></i></button>
+                <div class="pdp-thumbs" id="productThumbs">
+                    {% for photo in photos %}
+                    <button type="button" class="product-thumb {% if forloop.first %}active{% endif %}"
+                            data-src="{{ photo.url }}" aria-label="Show photo {{ forloop.counter }}">
+                        <img src="{{ photo.url }}" alt="{{ photo.alt }}" loading="lazy">
+                    </button>
+                    {% endfor %}
+                </div>
+                <button type="button" class="pdp-thumbs-arrow next" id="thumbsNext" aria-label="Scroll thumbnails right"><i class="bi bi-chevron-right"></i></button>
+            </div>
+            {% endif %}
+        </div>
+
+        {# Full-screen viewer #}
+        <div class="modal fade" id="imageViewer" tabindex="-1" aria-label="{{ product.name }} photos" aria-hidden="true">
+            <div class="modal-dialog modal-fullscreen">
+                <div class="modal-content image-viewer">
+                    <button type="button" class="btn-close btn-close-white image-viewer-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                    <button type="button" class="image-viewer-nav prev" id="viewerPrev" aria-label="Previous photo"><i class="bi bi-chevron-left"></i></button>
+                    <div class="image-viewer-stage" id="viewerStage">
+                        <img src="" id="viewerImage" alt="{{ product.name }}">
+                    </div>
+                    <button type="button" class="image-viewer-nav next" id="viewerNext" aria-label="Next photo"><i class="bi bi-chevron-right"></i></button>
+                    <div class="image-viewer-caption">
+                        <span id="viewerCounter"></span> &middot; Click or tap the photo to zoom in/out
+                    </div>
+                </div>
+            </div>
+        </div>
+        {% else %}
+        <div class="pdp-no-photo d-flex align-items-center justify-content-center">
+            <i class="bi bi-image fs-1 text-secondary"></i>
+        </div>
+        {% endif %}
+    </div>
+
+    {# ------------------------------------------------------------------ #}
+    {# Product info                                                       #}
+    {# ------------------------------------------------------------------ #}
+    <div class="col-lg-5">
+        <div class="pdp-info">
+            <a href="{% url 'storefront:product_list' %}?category={{ product.category.slug }}" class="pdp-eyebrow">{{ product.category.name }}</a>
+            <h1 class="pdp-title">{{ product.name }}</h1>
+
+            {% if product.review_count %}
+            <a href="#reviews" class="pdp-rating">
+                <span class="text-warning">{% for i in "12345" %}{% if forloop.counter <= product.average_rating %}<i class="bi bi-star-fill"></i>{% else %}<i class="bi bi-star"></i>{% endif %}{% endfor %}</span>
+                {{ product.average_rating }} ({{ product.review_count }} review{{ product.review_count|pluralize }})
+            </a>
+            {% endif %}
+
+            <div class="pdp-price">
+                <span class="pdp-price-current {% if product.discount_price %}is-sale{% endif %}" id="pdpPrice">৳{{ product.current_price|intcomma }}</span>
+                {% if product.discount_price %}
+                <span class="pdp-price-regular" id="pdpRegularPrice">৳{{ product.price|intcomma }}</span>
+                <span class="pdp-save-badge">Save {{ product.discount_percent }}%</span>
+                {% endif %}
+            </div>
+            <p class="pdp-tax-note">VAT included. Delivery charge calculated at checkout.</p>
+
+            <p class="pdp-stock" id="pdpStock">
+                {% if total_stock > 5 %}<span class="dot in"></span> In stock
+                {% elif total_stock > 0 %}<span class="dot low"></span> Only {{ total_stock }} left - order soon
+                {% else %}<span class="dot out"></span> Sold out{% endif %}
+            </p>
+
+            <form method="post" action="{% url 'storefront:cart_add' product.id %}" id="add-to-cart-form">
+                {% csrf_token %}
+                <input type="hidden" name="next" value="{{ request.path }}">
+                <input type="hidden" name="variant_id" id="selected-variant-id" value="">
+
+                {% for attr_name, values in variant_options.items %}
+                <fieldset class="pdp-option">
+                    <legend class="pdp-label">
+                        <span class="text-capitalize">{{ attr_name }}</span>: <span class="pdp-selected" data-selected-for="{{ attr_name }}"></span>
+                        {% if size_chart_page and attr_name|lower == 'size' %}
+                        <a href="{{ size_chart_page.get_absolute_url }}" target="_blank" class="pdp-size-chart"><i class="bi bi-rulers"></i> Size chart</a>
+                        {% endif %}
+                    </legend>
+                    <div class="pdp-pills">
+                        {% for value in values %}
+                        <input type="radio" class="btn-check variant-option" name="opt-{{ attr_name }}"
+                               id="opt-{{ attr_name|slugify }}-{{ forloop.counter }}" value="{{ value }}" data-attr="{{ attr_name }}">
+                        <label class="pdp-pill" for="opt-{{ attr_name|slugify }}-{{ forloop.counter }}">{{ value }}</label>
+                        {% endfor %}
+                    </div>
+                </fieldset>
+                {% endfor %}
+
+                <div class="pdp-label">Quantity</div>
+                <div class="pdp-qty">
+                    <button type="button" class="pdp-qty-btn" data-step="-1" aria-label="Decrease quantity"><i class="bi bi-dash"></i></button>
+                    <input type="number" name="quantity" id="pdpQty" value="1" min="1" max="{{ total_stock|default:1 }}" aria-label="Quantity">
+                    <button type="button" class="pdp-qty-btn" data-step="1" aria-label="Increase quantity"><i class="bi bi-plus"></i></button>
+                </div>
+
+                <div class="pdp-buttons" id="pdpButtons">
+                    <button type="submit" class="btn pdp-btn pdp-btn-outline" id="add-to-cart-btn" {% if not total_stock %}disabled{% endif %}>
+                        {% if total_stock %}Add to cart{% else %}Sold out{% endif %}
+                    </button>
+                    <button type="submit" name="buy_now" value="1" class="btn pdp-btn pdp-btn-solid" id="buy-now-btn" {% if not total_stock %}disabled{% endif %}>
+                        Buy it now
+                    </button>
+                </div>
+            </form>
+
+            <div class="pdp-actions">
+                {% if user.is_authenticated %}
+                <form method="post" action="{% url 'storefront:wishlist_toggle' product.id %}">
+                    {% csrf_token %}
+                    <input type="hidden" name="next" value="{{ request.path }}">
+                    <button type="submit" class="pdp-link-btn">
+                        <i class="bi {% if is_wishlisted %}bi-heart-fill text-danger{% else %}bi-heart{% endif %}"></i>
+                        {% if is_wishlisted %}Wishlisted{% else %}Add to wishlist{% endif %}
+                    </button>
+                </form>
+                {% else %}
+                <a href="{% url 'storefront:login' %}" class="pdp-link-btn"><i class="bi bi-heart"></i> Add to wishlist</a>
+                {% endif %}
+                <form method="post" action="{% url 'compare:add' product.id %}">
+                    {% csrf_token %}
+                    <input type="hidden" name="next" value="{{ request.path }}">
+                    <button type="submit" class="pdp-link-btn"><i class="bi bi-arrow-left-right"></i> Compare</button>
+                </form>
+                <div class="pdp-share">
+                    <span>Share:</span>
+                    <a href="https://www.facebook.com/sharer/sharer.php?u={{ request.build_absolute_uri|urlencode }}" target="_blank" rel="noopener" aria-label="Share on Facebook"><i class="bi bi-facebook"></i></a>
+                    <a href="https://wa.me/?text={{ product.name|urlencode }}%20{{ request.build_absolute_uri|urlencode }}" target="_blank" rel="noopener" aria-label="Share on WhatsApp"><i class="bi bi-whatsapp"></i></a>
+                    <button type="button" class="pdp-link-btn" id="copyLinkBtn" data-url="{{ request.build_absolute_uri }}" aria-label="Copy link"><i class="bi bi-link-45deg"></i></button>
+                </div>
+            </div>
+
+            <ul class="pdp-perks">
+                <li><i class="bi bi-truck"></i> Free delivery on orders over ৳{{ free_shipping_threshold|intcomma }} (otherwise ৳{{ shipping_fee }})</li>
+                <li><i class="bi bi-cash-coin"></i> Cash on delivery available</li>
+                <li><i class="bi bi-arrow-repeat"></i> Easy returns{% if return_policy_page %} - <a href="{{ return_policy_page.get_absolute_url }}">see policy</a>{% endif %}</li>
+                <li><i class="bi bi-shield-check"></i> Guaranteed safe &amp; secure checkout</li>
+            </ul>
+
+            <div class="accordion accordion-flush pdp-accordion" id="pdpDetails">
+                <div class="accordion-item">
+                    <h2 class="accordion-header">
+                        <button class="accordion-button" type="button" data-bs-toggle="collapse" data-bs-target="#pdpDescription" aria-expanded="true">Description</button>
+                    </h2>
+                    <div id="pdpDescription" class="accordion-collapse collapse show">
+                        <div class="accordion-body">
+                            {% if product.short_description %}<p class="fw-semibold">{{ product.short_description }}</p>{% endif %}
+                            {{ product.description|linebreaks }}
+                        </div>
+                    </div>
+                </div>
+                <div class="accordion-item">
+                    <h2 class="accordion-header">
+                        <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#pdpSpecs">Product details</button>
+                    </h2>
+                    <div id="pdpSpecs" class="accordion-collapse collapse">
+                        <div class="accordion-body">
+                            <dl class="pdp-specs">
+                                {% if product.material %}<dt>Material</dt><dd>{{ product.material }}</dd>{% endif %}
+                                {% if product.fit %}<dt>Fit</dt><dd>{{ product.fit }}</dd>{% endif %}
+                                {% for attr_name, values in variant_options.items %}
+                                <dt class="text-capitalize">{{ attr_name }}</dt><dd>{{ values|join:", " }}</dd>
+                                {% endfor %}
+                                <dt>Category</dt><dd>{{ product.category.name }}</dd>
+                                <dt>SKU</dt><dd>{{ product.sku }}</dd>
+                            </dl>
+                        </div>
+                    </div>
+                </div>
+                {% if product.care_instruction_list %}
+                <div class="accordion-item">
+                    <h2 class="accordion-header">
+                        <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#pdpCare">Care instructions</button>
+                    </h2>
+                    <div id="pdpCare" class="accordion-collapse collapse">
+                        <div class="accordion-body">
+                            <ul class="pdp-care">
+                                {% for line in product.care_instruction_list %}
+                                <li><i class="bi bi-check2"></i> {{ line }}</li>
+                                {% endfor %}
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+                {% endif %}
+                <div class="accordion-item">
+                    <h2 class="accordion-header">
+                        <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#pdpDelivery">Delivery &amp; returns</button>
+                    </h2>
+                    <div id="pdpDelivery" class="accordion-collapse collapse">
+                        <div class="accordion-body">
+                            <p>Delivery charge is ৳{{ shipping_fee }}. Orders over ৳{{ free_shipping_threshold|intcomma }} get free delivery.</p>
+                            <p class="mb-0">Payment: Cash on delivery.
+                                {% if return_policy_page %}Read our <a href="{{ return_policy_page.get_absolute_url }}">{{ return_policy_page.title }}</a>.{% endif %}
+                            </p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <p class="pdp-disclaimer">Product color may slightly vary due to screen settings and photography lighting.</p>
+        </div>
+    </div>
+</div>
+
+{# Mobile: sticky add-to-cart bar, shown once the main buttons scroll out of view #}
+<div class="pdp-sticky-bar d-lg-none" id="pdpStickyBar" aria-hidden="true">
+    <div class="pdp-sticky-price">৳{{ product.current_price|intcomma }}</div>
+    <button type="submit" form="add-to-cart-form" class="btn pdp-btn pdp-btn-solid" {% if not total_stock %}disabled{% endif %}>
+        {% if total_stock %}Add to cart{% else %}Sold out{% endif %}
+    </button>
+</div>
+
+{# ---------------------------------------------------------------------- #}
+{# Frequently bought together                                             #}
+{# ---------------------------------------------------------------------- #}
+{% if bought_together %}
+<section class="pdp-section">
+    <h2 class="pdp-section-title">Frequently bought together</h2>
+    <form method="post" action="{% url 'storefront:cart_add_bulk' %}">
+        {% csrf_token %}
+        <input type="hidden" name="next" value="{{ request.path }}">
+        <div class="d-flex flex-wrap gap-3 align-items-center mb-3">
+            <div class="text-center">
+                {% if product.thumbnail %}<img src="{{ product.thumbnail.url }}" class="pdp-bt-img">{% endif %}
+                <p class="small mb-0 mt-1">{{ product.name }}</p>
+                <input type="hidden" name="product_id" value="{{ product.id }}">
+            </div>
+            {% for item in bought_together %}
+            <span class="fs-4 text-muted">+</span>
+            <div class="text-center">
+                {% if item.thumbnail %}<img src="{{ item.thumbnail.url }}" class="pdp-bt-img">{% endif %}
+                <p class="small mb-0 mt-1">{{ item.name }}</p>
+                <p class="small text-muted mb-0">৳{{ item.current_price|intcomma }}</p>
+                <input type="hidden" name="product_id" value="{{ item.id }}">
+            </div>
+            {% endfor %}
+        </div>
+        <button type="submit" class="btn pdp-btn pdp-btn-solid px-4 w-auto">Add all to cart</button>
+    </form>
+</section>
+{% endif %}
+
+{# ---------------------------------------------------------------------- #}
+{# Reviews                                                                #}
+{# ---------------------------------------------------------------------- #}
+<section class="pdp-section" id="reviews">
+    <h2 class="pdp-section-title">Customer reviews</h2>
+    <div class="row g-4">
+        <div class="col-md-4">
+            <div class="pdp-review-summary">
+                {% if reviews %}
+                <div class="pdp-review-avg">{{ product.average_rating }}<small>/5</small></div>
+                <div class="text-warning mb-1">{% for i in "12345" %}{% if forloop.counter <= product.average_rating %}<i class="bi bi-star-fill"></i>{% else %}<i class="bi bi-star"></i>{% endif %}{% endfor %}</div>
+                <p class="small text-muted">Based on {{ reviews|length }} review{{ reviews|length|pluralize }}</p>
+                {% else %}
+                <p class="mb-2">Be the first to write a review</p>
+                {% endif %}
+
+                {% for stars, count, percent in rating_breakdown %}
+                <div class="pdp-bar-row">
+                    <span>{{ stars }} <i class="bi bi-star-fill text-warning"></i></span>
+                    <progress class="pdp-bar" value="{{ percent }}" max="100" aria-label="{{ percent }}% of reviews"></progress>
+                    <span class="text-muted">{{ count }}</span>
+                </div>
+                {% endfor %}
+
+                <div class="mt-3">
+                    {% if user.is_authenticated %}
+                        {% if not user_has_reviewed %}
+                        <button class="btn pdp-btn pdp-btn-outline" type="button" data-bs-toggle="collapse" data-bs-target="#reviewFormBox"
+                                aria-expanded="{% if review_form.errors %}true{% else %}false{% endif %}">Write a review</button>
+                        {% else %}
+                        <p class="text-muted small mb-0">You've already reviewed this product. Thanks!</p>
+                        {% endif %}
+                    {% else %}
+                    <a href="{% url 'storefront:login' %}?next={{ request.path }}" class="btn pdp-btn pdp-btn-outline">Log in to write a review</a>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+
+        <div class="col-md-8">
+            {% if user.is_authenticated and not user_has_reviewed %}
+            <div class="collapse {% if review_form.errors %}show{% endif %} mb-4" id="reviewFormBox">
+                <div class="pdp-review-form">
+                    <form method="post">
+                        {% csrf_token %}
+                        <input type="hidden" name="action" value="add_review">
+                        {{ review_form.as_p }}
+                        <button type="submit" class="btn pdp-btn pdp-btn-solid w-auto px-4">Submit review</button>
+                    </form>
+                </div>
+            </div>
+            {% endif %}
+
+            {% for review in reviews %}
+            <div class="pdp-review">
+                <div class="d-flex justify-content-between align-items-start">
+                    <div>
+                        <span class="text-warning small">{% for i in "12345" %}{% if forloop.counter <= review.rating %}<i class="bi bi-star-fill"></i>{% else %}<i class="bi bi-star"></i>{% endif %}{% endfor %}</span>
+                        <div class="fw-semibold">{{ review.user.get_full_name|default:review.user.username }}
+                            {% if review.is_verified_purchase %}<span class="badge bg-success-subtle text-success fw-normal ms-1"><i class="bi bi-patch-check"></i> Verified purchase</span>{% endif %}
+                        </div>
+                    </div>
+                    <span class="text-muted small">{{ review.created_at|date:"M d, Y" }}</span>
+                </div>
+                {% if review.title %}<p class="fw-semibold mb-1 mt-2">{{ review.title }}</p>{% endif %}
+                {% if review.comment %}<p class="mb-0">{{ review.comment }}</p>{% endif %}
+            </div>
+            {% empty %}
+            <p class="text-muted">No reviews yet.</p>
+            {% endfor %}
+        </div>
+    </div>
+</section>
+
+{% if related_products %}
+<section class="pdp-section">
+    <h2 class="pdp-section-title">You may also like</h2>
+    <div class="row g-3">
+        {% for product in related_products %}
+            {% include 'partials/product_card.html' %}
+        {% endfor %}
+    </div>
+</section>
+{% endif %}
+
+{{ variants_data|json_script:"variants-data" }}
+{% endblock %}
+
+{% block extra_js %}
+<script>
+/* ---------------- Variants, quantity, stock & price ---------------- */
+(function () {
+    const variants = JSON.parse(document.getElementById('variants-data').textContent);
+    const form = document.getElementById('add-to-cart-form');
+    const options = Array.from(document.querySelectorAll('.variant-option'));
+    const hiddenInput = document.getElementById('selected-variant-id');
+    const stockEl = document.getElementById('pdpStock');
+    const priceEl = document.getElementById('pdpPrice');
+    const regularEl = document.getElementById('pdpRegularPrice');
+    const addBtn = document.getElementById('add-to-cart-btn');
+    const buyBtn = document.getElementById('buy-now-btn');
+    const stickyBtn = document.querySelector('#pdpStickyBar button');
+    const stickyPrice = document.querySelector('#pdpStickyBar .pdp-sticky-price');
+    const qty = document.getElementById('pdpQty');
+    const attrs = Array.from(new Set(options.map(function (o) { return o.dataset.attr; })));
+
+    function money(value) {
+        return '৳' + Number(value).toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+    }
+
+    function setStock(stock) {
+        let html;
+        if (stock > 5) html = '<span class="dot in"></span> In stock';
+        else if (stock > 0) html = '<span class="dot low"></span> Only ' + stock + ' left - order soon';
+        else html = '<span class="dot out"></span> Sold out';
+        stockEl.innerHTML = html;
+
+        const soldOut = stock < 1;
+        [addBtn, buyBtn, stickyBtn].forEach(function (btn) { if (btn) btn.disabled = soldOut; });
+        addBtn.textContent = soldOut ? 'Sold out' : 'Add to cart';
+        if (stickyBtn) stickyBtn.textContent = soldOut ? 'Sold out' : 'Add to cart';
+
+        qty.max = Math.max(stock, 1);
+        if (Number(qty.value) > stock && stock > 0) qty.value = stock;
+    }
+
+    // Quantity stepper
+    document.querySelectorAll('.pdp-qty-btn').forEach(function (btn) {
+        btn.addEventListener('click', function () {
+            const next = (Number(qty.value) || 1) + Number(btn.dataset.step);
+            qty.value = Math.min(Math.max(next, 1), Number(qty.max) || 1);
+        });
+    });
+
+    if (!variants.length) return;
+
+    function selection() {
+        const sel = {};
+        attrs.forEach(function (attr) {
+            const checked = options.find(function (o) { return o.dataset.attr === attr && o.checked; });
+            if (checked) sel[attr] = checked.value;
+        });
+        return sel;
+    }
+
+    function matches(variant, sel, skipAttr) {
+        return Object.keys(sel).every(function (key) {
+            return key === skipAttr || String(variant.attributes[key]) === String(sel[key]);
+        });
+    }
+
+    function update() {
+        const sel = selection();
+
+        // Show the chosen value next to each option label ("Size: M")
+        attrs.forEach(function (attr) {
+            const label = document.querySelector('[data-selected-for="' + attr + '"]');
+            if (label) label.textContent = sel[attr] || '';
+        });
+
+        // Cross out values that have no in-stock variant given the other current choices
+        options.forEach(function (opt) {
+            const trial = Object.assign({}, sel, { [opt.dataset.attr]: opt.value });
+            const available = variants.some(function (v) { return v.stock > 0 && matches(v, trial); });
+            opt.nextElementSibling.classList.toggle('is-unavailable', !available);
+        });
+
+        const match = variants.find(function (v) { return matches(v, sel); });
+        if (!match) {
+            hiddenInput.value = '';
+            setStock(0);
+            return;
+        }
+        hiddenInput.value = match.id;
+        priceEl.textContent = money(match.price);
+        if (stickyPrice) stickyPrice.textContent = money(match.price);
+        if (regularEl) regularEl.textContent = money(match.regular_price);
+        setStock(match.stock);
+    }
+
+    // Pre-select the first in-stock variant (or the first one if everything is sold out)
+    const initial = variants.find(function (v) { return v.stock > 0; }) || variants[0];
+    options.forEach(function (opt) {
+        opt.checked = String(initial.attributes[opt.dataset.attr]) === opt.value;
+        opt.addEventListener('change', update);
+    });
+    update();
+
+    form.addEventListener('submit', function (e) {
+        if (!hiddenInput.value) {
+            e.preventDefault();
+            stockEl.innerHTML = '<span class="dot out"></span> Please choose an available option';
+        }
+    });
+})();
+
+/* ---------------- Share: copy link ---------------- */
+(function () {
+    const btn = document.getElementById('copyLinkBtn');
+    if (!btn) return;
+    btn.addEventListener('click', function () {
+        navigator.clipboard.writeText(btn.dataset.url).then(function () {
+            btn.innerHTML = '<i class="bi bi-check2"></i>';
+            setTimeout(function () { btn.innerHTML = '<i class="bi bi-link-45deg"></i>'; }, 1500);
+        });
+    });
+})();
+
+/* ---------------- Mobile sticky add-to-cart bar ---------------- */
+(function () {
+    const bar = document.getElementById('pdpStickyBar');
+    const buttons = document.getElementById('pdpButtons');
+    if (!bar || !buttons || !('IntersectionObserver' in window)) return;
+    new IntersectionObserver(function (entries) {
+        const hidden = !entries[0].isIntersecting && entries[0].boundingClientRect.top < 0;
+        bar.classList.toggle('show', hidden);
+        bar.setAttribute('aria-hidden', hidden ? 'false' : 'true');
+    }).observe(buttons);
+})();
+
+/* ---------------- Gallery: thumbnails, arrows, hover zoom, full-screen viewer ---------------- */
+(function () {
+    const zoomBox = document.getElementById('productZoom');
+    if (!zoomBox) return;
+
+    const mainImg = document.getElementById('productMainImage');
+    const thumbs = Array.from(document.querySelectorAll('.product-thumb'));
+    const photos = thumbs.length ? thumbs.map(function (t) { return t.dataset.src; }) : [mainImg.src];
+    const mainCounter = document.getElementById('mainCounter');
+    let current = 0;
+
+    // --- Hover zoom (desktop / mouse only) --------------------------------
+    const canHover = window.matchMedia('(hover: hover) and (pointer: fine)').matches;
+    const HOVER_SCALE = 2.2;
+    if (canHover) {
+        zoomBox.addEventListener('mousemove', function (e) {
+            const rect = zoomBox.getBoundingClientRect();
+            const x = ((e.clientX - rect.left) / rect.width) * 100;
+            const y = ((e.clientY - rect.top) / rect.height) * 100;
+            mainImg.style.transformOrigin = x + '% ' + y + '%';
+            mainImg.style.transform = 'scale(' + HOVER_SCALE + ')';
+        });
+        zoomBox.addEventListener('mouseleave', function () {
+            mainImg.style.transform = '';
+        });
+    }
+
+    // --- Thumbnails and arrows swap the main photo -------------------------
+    function showPhoto(index) {
+        current = (index + photos.length) % photos.length;
+        mainImg.src = photos[current];
+        thumbs.forEach(function (t, i) { t.classList.toggle('active', i === current); });
+        if (mainCounter) mainCounter.textContent = (current + 1) + ' / ' + photos.length;
+        // Keep the active thumbnail visible without scrolling the whole page
+        const strip = document.getElementById('productThumbs');
+        const thumb = thumbs[current];
+        if (strip && thumb) {
+            const left = thumb.offsetLeft - strip.offsetLeft;
+            if (left < strip.scrollLeft || left + thumb.offsetWidth > strip.scrollLeft + strip.clientWidth) {
+                strip.scrollTo({ left: left - (strip.clientWidth - thumb.offsetWidth) / 2, behavior: 'smooth' });
+            }
+        }
+    }
+    thumbs.forEach(function (thumb, i) {
+        thumb.addEventListener('click', function () { showPhoto(i); });
+    });
+    const mainPrev = document.getElementById('mainPrev');
+    const mainNext = document.getElementById('mainNext');
+    if (mainPrev) mainPrev.addEventListener('click', function () { showPhoto(current - 1); });
+    if (mainNext) mainNext.addEventListener('click', function () { showPhoto(current + 1); });
+
+    // Thumbnail strip arrows: scroll by one "page" of thumbnails; hide an arrow when there's nothing more that way
+    const strip = document.getElementById('productThumbs');
+    const thumbsPrev = document.getElementById('thumbsPrev');
+    const thumbsNext = document.getElementById('thumbsNext');
+    function updateStripArrows() {
+        if (!strip) return;
+        thumbsPrev.disabled = strip.scrollLeft <= 1;
+        thumbsNext.disabled = strip.scrollLeft + strip.clientWidth >= strip.scrollWidth - 1;
+    }
+    if (strip) {
+        thumbsPrev.addEventListener('click', function () { strip.scrollBy({ left: -strip.clientWidth, behavior: 'smooth' }); });
+        thumbsNext.addEventListener('click', function () { strip.scrollBy({ left: strip.clientWidth, behavior: 'smooth' }); });
+        strip.addEventListener('scroll', updateStripArrows, { passive: true });
+        window.addEventListener('resize', updateStripArrows);
+        updateStripArrows();
+    }
+
+    // Swipe left/right on the main photo (phones)
+    let touchStartX = null;
+    let swiped = false;
+    zoomBox.addEventListener('touchstart', function (e) { touchStartX = e.touches[0].clientX; }, { passive: true });
+    zoomBox.addEventListener('touchend', function (e) {
+        if (touchStartX === null || photos.length < 2) return;
+        const dx = e.changedTouches[0].clientX - touchStartX;
+        touchStartX = null;
+        if (Math.abs(dx) > 40) {
+            swiped = true;
+            showPhoto(current + (dx < 0 ? 1 : -1));
+        }
+    });
+
+    // --- Full-screen viewer with click-to-zoom and pan --------------------
+    const viewerEl = document.getElementById('imageViewer');
+    const viewer = new bootstrap.Modal(viewerEl);
+    const stage = document.getElementById('viewerStage');
+    const viewerImg = document.getElementById('viewerImage');
+    const counter = document.getElementById('viewerCounter');
+    const prevBtn = document.getElementById('viewerPrev');
+    const nextBtn = document.getElementById('viewerNext');
+    const VIEWER_SCALE = 2.5;
+    let viewerIndex = 0;
+    let zoomed = false;
+    let baseRect = null;  // the photo's unscaled on-screen box, measured before zooming in
+
+    function setZoomOrigin(clientX, clientY) {
+        // Transforms don't change layout, so the unscaled box stays valid while zoomed.
+        // (Measuring the scaled box instead would shift every time the origin moves.)
+        const rect = baseRect;
+        const x = Math.min(100, Math.max(0, ((clientX - rect.left) / rect.width) * 100));
+        const y = Math.min(100, Math.max(0, ((clientY - rect.top) / rect.height) * 100));
+        viewerImg.style.transformOrigin = x + '% ' + y + '%';
+    }
+
+    function resetZoom() {
+        zoomed = false;
+        viewerImg.style.transform = '';
+        stage.classList.remove('zoomed');
+    }
+
+    function showInViewer(index) {
+        viewerIndex = (index + photos.length) % photos.length;
+        resetZoom();
+        viewerImg.src = photos[viewerIndex];
+        counter.textContent = (viewerIndex + 1) + ' / ' + photos.length;
+    }
+
+    const multiple = photos.length > 1;
+    prevBtn.hidden = !multiple;
+    nextBtn.hidden = !multiple;
+
+    zoomBox.addEventListener('click', function () {
+        if (swiped) { swiped = false; return; }  // a swipe isn't a tap
+        mainImg.style.transform = '';
+        showInViewer(current);
+        viewer.show();
+    });
+
+    viewerImg.addEventListener('click', function (e) {
+        if (zoomed) {
+            resetZoom();
+            return;
+        }
+        baseRect = viewerImg.getBoundingClientRect();
+        setZoomOrigin(e.clientX, e.clientY);
+        zoomed = true;
+        viewerImg.style.transform = 'scale(' + VIEWER_SCALE + ')';
+        stage.classList.add('zoomed');
+    });
+
+    // While zoomed, moving the mouse / finger pans around the photo
+    stage.addEventListener('mousemove', function (e) {
+        if (zoomed) setZoomOrigin(e.clientX, e.clientY);
+    });
+    stage.addEventListener('touchmove', function (e) {
+        if (!zoomed) return;
+        e.preventDefault();
+        setZoomOrigin(e.touches[0].clientX, e.touches[0].clientY);
+    }, { passive: false });
+
+    prevBtn.addEventListener('click', function () { showInViewer(viewerIndex - 1); });
+    nextBtn.addEventListener('click', function () { showInViewer(viewerIndex + 1); });
+
+    document.addEventListener('keydown', function (e) {
+        if (!viewerEl.classList.contains('show') || !multiple) return;
+        if (e.key === 'ArrowLeft') showInViewer(viewerIndex - 1);
+        if (e.key === 'ArrowRight') showInViewer(viewerIndex + 1);
+    });
+
+    window.addEventListener('resize', resetZoom);
+
+    viewerEl.addEventListener('hidden.bs.modal', function () {
+        resetZoom();
+        if (multiple) showPhoto(viewerIndex);  // keep the page in sync with the last viewed photo
+    });
+})();
+</script>
+{% endblock %}

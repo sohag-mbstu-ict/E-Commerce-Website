@@ -1,0 +1,267 @@
+body {
+    background-color: #f8f9fa;
+}
+
+.hero {
+    background: linear-gradient(120deg, #eef2ff, #f8f9fa);
+}
+
+.product-card img.card-img-top,
+.product-card .card-img-top {
+    /* Portrait 3:4 to match product photos (full-length sharee / 3 piece) without cropping */
+    aspect-ratio: 3 / 4;
+    width: 100%;
+    object-fit: cover;
+    background-color: #f2f2f2;
+}
+
+.product-card {
+    transition: transform 0.15s ease, box-shadow 0.15s ease;
+}
+
+.product-card:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 0.5rem 1rem rgba(0, 0, 0, 0.1) !important;
+}
+
+.category-card {
+    transition: box-shadow 0.15s ease;
+}
+
+.category-card:hover {
+    box-shadow: 0 0.25rem 0.75rem rgba(0, 0, 0, 0.08);
+}
+
+footer code {
+    color: #f8f9fa;
+    background: rgba(255, 255, 255, 0.1);
+    padding: 0.1rem 0.4rem;
+    border-radius: 0.25rem;
+}
+
+/* ------------------------------------------------------------------ */
+/* Twelve-inspired layout additions: announcement bar, hero slider,   */
+/* gradient category tiles. All colors/text are placeholders you can  */
+/* edit from the Django admin (ContentBlock / Category models).       */
+/* ------------------------------------------------------------------ */
+
+.announcement-bar {
+    background: #111827;
+    color: #fff;
+    letter-spacing: 0.02em;
+}
+
+.hero-slide {
+    min-height: 380px;
+    border-radius: 0.5rem;
+    display: flex;
+    align-items: center;
+    /* Side padding clears Bootstrap's prev/next arrows, which are 15% wide */
+    padding: 3rem max(4.5rem, 15%);
+    color: #fff;
+}
+
+.hero-slide h2 {
+    font-weight: 700;
+    font-size: 2.25rem;
+}
+
+.category-tile {
+    position: relative;
+    border-radius: 0.5rem;
+    overflow: hidden;
+    height: 180px;
+    display: flex;
+    align-items: flex-end;
+    padding: 1rem;
+    color: #fff;
+    text-decoration: none;
+    font-weight: 600;
+    transition: transform 0.15s ease;
+}
+
+.category-tile:hover {
+    transform: translateY(-3px);
+    color: #fff;
+}
+
+.category-tile-sm {
+    height: 130px;
+    font-size: 0.9rem;
+}
+
+.promo-banner {
+    min-height: 220px;
+    border-radius: 0.5rem;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    color: #fff;
+    text-align: center;
+}
+
+.icon-btn {
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    background: #fff;
+    border: 1px solid #dee2e6;
+}
+
+.icon-btn.active {
+    background: #dc3545;
+    color: #fff;
+    border-color: #dc3545;
+}
+
+.cat-color-1 { background: linear-gradient(135deg, #1e293b, #475569); }
+.cat-color-2 { background: linear-gradient(135deg, #7c2d12, #ea580c); }
+.cat-color-3 { background: linear-gradient(135deg, #1e3a8a, #3b82f6); }
+.cat-color-4 { background: linear-gradient(135deg, #14532d, #22c55e); }
+.cat-color-5 { background: linear-gradient(135deg, #581c87, #a855f7); }
+.cat-color-6 { background: linear-gradient(135deg, #831843, #ec4899); }
+
+/* ---------- Product page: image zoom ---------- */
+.product-zoom {
+    position: relative;
+    overflow: hidden;
+    aspect-ratio: 3 / 4;
+    background-color: #f2f2f2;
+    cursor: zoom-in;
+}
+
+.product-zoom img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    transition: transform 0.15s ease-out;
+    will-change: transform;
+}
+
+.product-zoom-hint {
+    position: absolute;
+    right: 0.75rem;
+    bottom: 0.75rem;
+    padding: 0.3rem 0.65rem;
+    font-size: 0.8rem;
+    color: #fff;
+    background: rgba(17, 24, 39, 0.7);
+    border-radius: 999px;
+    pointer-events: none;
+    transition: opacity 0.2s ease;
+}
+
+.product-zoom:hover .product-zoom-hint {
+    opacity: 0;
+}
+
+.product-thumb {
+    flex: 0 0 auto;
+    width: 72px;
+    aspect-ratio: 3 / 4; /* same shape as the main photo */
+    padding: 0;
+    border: 1px solid transparent;
+    overflow: hidden;
+    background: #f2f2f2;
+    cursor: pointer;
+    opacity: 0.6;
+    transition: opacity 0.15s ease, border-color 0.15s ease;
+}
+
+.product-thumb.active,
+.product-thumb:hover {
+    opacity: 1;
+}
+
+.product-thumb img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+.product-thumb.active,
+.product-thumb:hover {
+    border-color: #212529;
+}
+
+/* Full-screen viewer */
+.image-viewer {
+    background: rgba(10, 10, 10, 0.95);
+    border: 0;
+    border-radius: 0;
+}
+
+.image-viewer-stage {
+    width: 100%;
+    height: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    overflow: hidden;
+    padding: 3.5rem 4rem;
+}
+
+.image-viewer-stage img {
+    max-width: 100%;
+    max-height: 100%;
+    object-fit: contain;
+    cursor: zoom-in;
+    transition: transform 0.2s ease-out;
+    user-select: none;
+    -webkit-user-drag: none;
+}
+
+.image-viewer-stage.zoomed img {
+    cursor: zoom-out;
+    transition: none;
+}
+
+.image-viewer-close {
+    position: absolute;
+    top: 1rem;
+    right: 1rem;
+    z-index: 2;
+    width: 1.5rem;
+    height: 1.5rem;
+}
+
+.image-viewer-nav {
+    position: absolute;
+    top: 50%;
+    z-index: 2;
+    transform: translateY(-50%);
+    width: 3rem;
+    height: 3rem;
+    border: 0;
+    border-radius: 50%;
+    color: #fff;
+    font-size: 1.5rem;
+    background: rgba(255, 255, 255, 0.12);
+}
+
+.image-viewer-nav:hover {
+    background: rgba(255, 255, 255, 0.25);
+}
+
+.image-viewer-nav.prev { left: 1rem; }
+.image-viewer-nav.next { right: 1rem; }
+
+.image-viewer-caption {
+    position: absolute;
+    bottom: 1rem;
+    left: 0;
+    right: 0;
+    text-align: center;
+    color: rgba(255, 255, 255, 0.7);
+    font-size: 0.85rem;
+    pointer-events: none;
+}
+
+@media (max-width: 576px) {
+    .image-viewer-stage { padding: 3.5rem 0.5rem; }
+    .image-viewer-nav { width: 2.5rem; height: 2.5rem; font-size: 1.2rem; }
+}

@@ -1,0 +1,47 @@
+{% extends 'base.html' %}
+{% load humanize %}
+{% block title %}My Wishlist - MyShop{% endblock %}
+
+{% block content %}
+<h3 class="mb-4">My Wishlist</h3>
+
+{% if items %}
+<div class="row g-3">
+    {% for item in items %}
+    <div class="col-6 col-md-4 col-lg-3">
+        <div class="card h-100 shadow-sm">
+            <a href="{{ item.product.get_absolute_url }}">
+                {% if item.product.thumbnail %}
+                <img src="{{ item.product.thumbnail.url }}" class="card-img-top" style="height:200px;object-fit:cover;">
+                {% endif %}
+            </a>
+            <div class="card-body d-flex flex-column">
+                <h6 class="card-title">
+                    <a href="{{ item.product.get_absolute_url }}" class="text-decoration-none text-dark">{{ item.product.name }}</a>
+                </h6>
+                <p class="fw-bold">৳{{ item.product.current_price|intcomma }}</p>
+                <div class="mt-auto d-flex gap-2">
+                    <form method="post" action="{% url 'storefront:cart_add' item.product.id %}" class="flex-grow-1">
+                        {% csrf_token %}
+                        <input type="hidden" name="next" value="{% url 'storefront:wishlist_list' %}">
+                        <button type="submit" class="btn btn-sm btn-primary w-100">Add to Cart</button>
+                    </form>
+                    <form method="post" action="{% url 'storefront:wishlist_toggle' item.product.id %}">
+                        {% csrf_token %}
+                        <input type="hidden" name="next" value="{% url 'storefront:wishlist_list' %}">
+                        <button type="submit" class="btn btn-sm btn-outline-danger"><i class="bi bi-trash"></i></button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+    {% endfor %}
+</div>
+{% else %}
+<div class="text-center py-5">
+    <i class="bi bi-heart fs-1 text-secondary"></i>
+    <p class="mt-3 text-muted">Your wishlist is empty.</p>
+    <a href="{% url 'storefront:product_list' %}" class="btn btn-primary">Browse Products</a>
+</div>
+{% endif %}
+{% endblock %}

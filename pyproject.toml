@@ -1,0 +1,16 @@
+[project]
+name = "ecommerce-project"
+version = "0.1.0"
+description = "MyShop - Django REST Framework e-commerce backend with a Bootstrap storefront"
+readme = "README.md"
+requires-python = ">=3.12"
+# Keep in sync with requirements.txt (used by the pip-based setup in the README).
+dependencies = [
+    "Django>=5.0,<5.3",
+    "djangorestframework>=3.15,<3.16",
+    "djangorestframework-simplejwt>=5.3,<5.4",
+    "django-filter>=24.2,<25.0",
+    "Pillow>=10.3,<11.0",
+    "django-cors-headers>=4.3,<5.0",
+    "python-dotenv>=1.0,<2.0",
+]

@@ -1,0 +1,16 @@
+{% extends 'base.html' %}
+{% block title %}Login - MyShop{% endblock %}
+
+{% block content %}
+<div class="row justify-content-center">
+    <div class="col-md-5">
+        <h3 class="mb-4">Login</h3>
+        <form method="post">
+            {% csrf_token %}
+            {{ form.as_p }}
+            <button type="submit" class="btn btn-primary w-100">Login</button>
+        </form>
+        <p class="mt-3 small">Don't have an account? <a href="{% url 'storefront:register' %}">Sign up</a></p>
+    </div>
+</div>
+{% endblock %}
