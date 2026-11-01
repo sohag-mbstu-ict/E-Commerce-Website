@@ -1,6 +1,7 @@
 """
 Django settings for the ecommerce project.
 """
+import mimetypes
 import os
 from datetime import timedelta
 from pathlib import Path
@@ -104,6 +105,7 @@ TEMPLATES = [
                 'catalog.context_processors.categories',
                 'compare.context_processors.compare',
                 'pages.context_processors.footer_pages',
+                'storefront.context_processors.asset_version',
             ],
         },
     },
@@ -158,6 +160,10 @@ STATIC_ROOT = BASE_DIR / 'staticfiles'
 
 MEDIA_URL = 'media/'
 MEDIA_ROOT = BASE_DIR / 'media'
+
+# Windows' MIME registry often lacks .webp, so uploaded WebP images would be served as
+# application/octet-stream (with nosniff on, browsers may then refuse to display them).
+mimetypes.add_type('image/webp', '.webp')
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 

@@ -1,0 +1,52 @@
+How to upload your banners
+--------------------------------------------------------
+Step 1: Prepare the 5 images
+Save each image from Google Flow to your computer.
+Open squoosh.app, drag in an image, and set:
+Resize: width 1920, height 1080
+Format: WebP, quality about 80
+The size shown at the bottom right should be under 300 KB.
+Download it with a simple name. Match each image to its slide:
+File name	Image	Goes on slide
+banner-sale.webp	Folded sharees with watch and bangles	Mega Sale - Up to 40% Off
+banner-sharee.webp	Red sharee model	Sharee Collection
+banner-3piece.webp	Purple 3 piece model	3 Piece Collection
+banner-bangles.webp	Hands with bangles	Bangle Collection
+banner-watch.webp	Two watches on stone	Watch Collection
+--------------------------------------------------------
+
+Step 2: Start the server and log in
+In the VS Code terminal, run:
+
+.venv\Scripts\activate
+python manage.py runserver
+Open http://127.0.0.1:8000/admin/ and log in as sohag.
+--------------------------------------------------------
+
+
+Step 3: Open the slides
+Under STOREFRONT, click Content blocks.
+You'll see your 5 slides and the promo banner. The new Picture column shows each slide's color for now.
+--------------------------------------------------------
+
+
+Step 4: Upload a picture
+Click a slide, for example Sharee Collection.
+Find the Banner picture section.
+Click Choose File next to Image and select banner-sharee.webp.
+Click Save and continue editing. A preview appears under Current picture, so you can check it's the right one.
+Click Save to go back to the list.
+--------------------------------------------------------
+
+
+Step 5: Repeat for the other 4 slides
+Repeat Step 4 for Mega Sale, 3 Piece, Bangle and Watch. When you're done, the Picture column shows a small preview of each banner.
+
+Step 6: Check the home page
+Open http://127.0.0.1:8000/ and press Ctrl + F5. Each slide now shows its picture, with your heading and button on the left.
+
+How the banners display
+Shape: slides with a picture use the same 16:9 shape as your images, so nothing important is cropped. They're capped at 70% of the screen height so they don't take over the whole page.
+Text readability: a soft dark shade is added on the left behind the heading. Your images already have dark, empty left sides, so it blends in.
+Phones: the banner is narrow, so it shows the right side of the image (where the model or product is) with a slightly darker shade over the whole picture.
+The colors still matter: a slide's gradient shows briefly while its picture loads, and it's used again if you remove the picture.

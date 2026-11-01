@@ -1,0 +1,80 @@
+The prompts describe a model in a hijab and niqab to match your product photos. Change that line if you want a different look.
+-----------------------------------------------------------
+1. Mega Sale
+
+Wide 16:9 fashion e-commerce website hero banner, premium editorial style.
+
+RIGHT SIDE (about 45% of the frame): an elegant flat-lay arrangement of folded colorful sharees in rich jewel tones (deep red, maroon, emerald green, royal blue), a few gold-plated bangles and a delicate ladies' watch placed on top, neatly styled on a dark charcoal fabric surface, soft shopping-bag silhouettes partially visible at the edge.
+
+LEFT SIDE (about 55%): clean, empty, softly darker space with a smooth deep charcoal-to-black gradient background, no objects, reserved for white text overlay.
+
+Lighting: soft warm studio light from the right, gentle shadows, luxurious festive sale mood.
+Style: high-end Bangladeshi fashion brand campaign, photorealistic, sharp detail, rich colors.
+
+No text, no letters, no numbers, no logos, no watermark, no price tags.
+-----------------------------------------------------------
+
+
+2. Sharee Collection
+
+Wide 16:9 fashion e-commerce website hero banner, premium editorial campaign photo.
+
+RIGHT SIDE (about 45% of the frame): a graceful South Asian woman wearing a flowing deep red georgette sharee with an intricate embroidered scalloped border and tassels on the anchal, modestly styled with a matching red hijab and niqab, standing in a relaxed elegant pose, the anchal draped over her shoulder and gently flowing to show the border design. Full body or three-quarter length.
+
+LEFT SIDE (about 55%): clean, empty space with a smooth deep maroon-to-dark-red gradient backdrop, no objects, reserved for white text overlay.
+
+Lighting: soft studio key light from the right, subtle rim light separating her from the background, rich true-to-life fabric colors and visible embroidery detail.
+Style: luxury Bangladeshi bridal & festive wear brand, photorealistic, sharp focus.
+
+No text, no letters, no logos, no watermark.
+-----------------------------------------------------------
+
+
+3. 3 Piece Collection
+
+Wide 16:9 fashion e-commerce website hero banner, premium editorial campaign photo.
+
+RIGHT SIDE (about 45% of the frame): a graceful South Asian woman wearing an elegant three-piece salwar kameez — a knee-length printed lawn kameez with delicate embroidery at the neckline and sleeves, matching straight pants, and a soft chiffon dupatta draped over her shoulders — modestly styled with a matching hijab, standing in a relaxed confident pose, full body visible.
+
+LEFT SIDE (about 55%): clean, empty space with a smooth deep purple-to-violet gradient backdrop, no objects, reserved for white text overlay.
+
+Lighting: bright soft studio lighting from the right, gentle shadow, fresh and comfortable everyday-elegance mood.
+Style: modern Bangladeshi women's fashion brand, photorealistic, sharp fabric detail, natural colors.
+
+No text, no letters, no logos, no watermark.
+-----------------------------------------------------------
+
+
+4. Bangle Collection
+
+Wide 16:9 jewellery e-commerce website hero banner, luxury product photography.
+
+RIGHT SIDE (about 45% of the frame): close-up of a woman's graceful hands and wrists wearing stacked gold-plated bangles, kundan stone bangles and colorful glass churi, wrists gently crossed, wearing the sleeve edge of a deep red embroidered outfit, a few extra bangles arranged on a velvet surface beside them.
+
+LEFT SIDE (about 55%): clean, empty space with a smooth dark amber-to-deep-brown gradient backdrop, no objects, reserved for white text overlay.
+
+Lighting: warm soft studio light with sparkling natural highlights on the gold and stones, no harsh glare, shallow depth of field.
+Style: premium South Asian jewellery brand campaign, photorealistic, macro-sharp detail on stones and engravings.
+
+No text, no letters, no logos, no watermark.
+-----------------------------------------------------------
+
+
+5. Watch Collection
+
+Wide 16:9 e-commerce website hero banner, luxury product photography.
+
+RIGHT SIDE (about 45% of the frame): an elegant ladies' rose-gold wristwatch with a slim bracelet strap, displayed at a slight angle on a smooth dark slate stone surface, with a second classic watch with a leather strap lying softly behind it, subtle reflection on the surface.
+
+LEFT SIDE (about 55%): clean, empty space with a smooth deep navy-to-charcoal gradient backdrop, no objects, reserved for white text overlay.
+
+Lighting: soft directional studio light from the right, gentle highlights on the metal and glass, refined minimal mood.
+Style: premium watch brand advertisement, photorealistic, crisp detail on dial and strap.
+
+No text, no letters, no numbers on the background, no logos, no watermark.
+Tips
+If the subject ends up on the wrong side, reply: Move the subject to the right third of the frame and keep the left half empty.
+If text or letters appear in the image, reply: Remove all text and letters from the image.
+Keep the banners consistent: use the same lighting line and dark left side for all five, so the slider looks like one campaign.
+On phones the slider is narrow, so part of the left and right edges gets cut off. Keeping the subject compact in the right third (not touching the edge) means it stays visible.
+The background colors in each prompt match the slide's current gradient (red, purple, gold, dark slate), so the banners blend with the existing design even before the image field is added.

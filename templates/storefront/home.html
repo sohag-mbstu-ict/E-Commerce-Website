@@ -4,12 +4,14 @@
 {% block content %}
 
 {% if hero_slides %}
-<div id="heroCarousel" class="carousel slide mb-5" data-bs-ride="carousel">
+{# Auto-advance every 5 s and keep going while the mouse is over the (large) banner #}
+<div id="heroCarousel" class="carousel slide mb-5" data-bs-ride="carousel" data-bs-interval="3000" data-bs-pause="false">
     <div class="carousel-inner">
         {% for slide in hero_slides %}
         <div class="carousel-item {% if forloop.first %}active{% endif %}">
-            <div class="hero-slide" style="background: {{ slide.gradient_css }}; color: {{ slide.text_color }};">
-                <div>
+            <div class="hero-slide {% if slide.image %}has-image{% endif %}"
+                 style="background: {{ slide.gradient_css }}; color: {{ slide.text_color }};{% if slide.image %} --banner-image: url('{{ slide.image.url }}');{% endif %}">
+                <div class="hero-slide-content">
                     <h2>{{ slide.heading }}</h2>
                     {% if slide.subheading %}<p class="fs-5">{{ slide.subheading }}</p>{% endif %}
                     {% if slide.cta_text %}
@@ -61,7 +63,8 @@
 
 {% if promo_banners %}
 {% for banner in promo_banners %}
-<div class="promo-banner mb-5" style="background: {{ banner.gradient_css }}; color: {{ banner.text_color }};">
+<div class="promo-banner mb-5 {% if banner.image %}has-image{% endif %}"
+     style="background: {{ banner.gradient_css }}; color: {{ banner.text_color }};{% if banner.image %} --banner-image: url('{{ banner.image.url }}');{% endif %}">
     <h3 class="fw-bold">{{ banner.heading }}</h3>
     {% if banner.subheading %}<p class="fs-5">{{ banner.subheading }}</p>{% endif %}
     {% if banner.cta_text %}<a href="{{ banner.cta_url|default:'#' }}" class="btn btn-light mt-2">{{ banner.cta_text }}</a>{% endif %}

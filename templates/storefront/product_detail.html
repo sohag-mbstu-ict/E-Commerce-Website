@@ -1,7 +1,7 @@
 {% extends 'base.html' %}
 {% load humanize static %}
 {% block title %}{{ product.name }} - MyShop{% endblock %}
-{% block extra_head %}<link href="{% static 'css/product.css' %}" rel="stylesheet">{% endblock %}
+{% block extra_head %}<link href="{% static 'css/product.css' %}?v={{ asset_version }}" rel="stylesheet">{% endblock %}
 
 {% block content %}
 <nav aria-label="breadcrumb">

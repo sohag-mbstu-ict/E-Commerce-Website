@@ -18,6 +18,13 @@ class ContentBlock(models.Model):
     cta_text = models.CharField(max_length=40, blank=True, default='Shop Now')
     cta_url = models.CharField(max_length=255, blank=True, help_text='Relative or absolute URL, e.g. /products/?category=mens')
 
+    image = models.ImageField(
+        upload_to='banners/', blank=True, null=True,
+        help_text='Optional background picture. Best: wide 16:9 (1920 x 1080), under 300 KB, with the '
+                  'subject on the RIGHT and empty space on the left for the text. '
+                  'Leave empty to use the gradient colors below.',
+    )
+
     color_start = models.CharField(max_length=7, default='#1f2937', help_text='Gradient start, hex e.g. #1f2937')
     color_end = models.CharField(max_length=7, default='#4b5563', help_text='Gradient end, hex e.g. #4b5563')
     text_color = models.CharField(max_length=7, default='#ffffff')

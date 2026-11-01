@@ -14,3 +14,13 @@ python manage.py seed_pages
 python manage.py seed_homepage_content
 python manage.py runserver
 
+
+-----------------------------------------------------------------
+How to upload your banners
+Step 1: Prepare the 5 images
+Save each image from Google Flow to your computer.
+Open squoosh.app, drag in an image, and set:
+Resize: width 1920, height 1080
+Format: WebP, quality about 80
+The size shown at the bottom right should be under 300 KB.
+Download it with a simple name. Match each image to its slide:

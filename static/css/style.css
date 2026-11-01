@@ -66,6 +66,87 @@ footer code {
     font-size: 2.25rem;
 }
 
+/* ---------- Banners with a picture (ContentBlock.image) ---------- */
+.hero-slide.has-image,
+.promo-banner.has-image {
+    position: relative;
+    overflow: hidden;
+}
+
+/* Promo banner: picture fills the whole banner */
+.promo-banner.has-image::before {
+    content: "";
+    position: absolute;
+    inset: 0;
+    background: var(--banner-image) center / cover no-repeat;
+}
+
+/* Hero slide: show the picture's FULL height (never cut the model's head or feet),
+   anchored to the right where the subject is. When the slide is wider than 16:9, the
+   empty space on the left shows the slide's gradient, and the picture's left edge
+   fades into it so there's no visible seam. */
+.hero-slide.has-image::before {
+    content: "";
+    position: absolute;
+    top: 0;
+    right: 0;
+    bottom: 0;
+    aspect-ratio: 16 / 9;
+    background: var(--banner-image) right center / cover no-repeat;
+    -webkit-mask-image: linear-gradient(to right, transparent 0, #000 30%);
+    mask-image: linear-gradient(to right, transparent 0, #000 30%);
+}
+
+/* Dark shade on the left so white headings stay readable on any picture */
+.hero-slide.has-image::after {
+    content: "";
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(90deg, rgba(0, 0, 0, 0.55) 0%, rgba(0, 0, 0, 0.25) 40%, rgba(0, 0, 0, 0) 65%);
+}
+
+.promo-banner.has-image::after {
+    content: "";
+    position: absolute;
+    inset: 0;
+    background: rgba(0, 0, 0, 0.4);
+}
+
+.hero-slide.has-image > *,
+.promo-banner.has-image > * {
+    position: relative;
+    z-index: 1;
+}
+
+/* Picture slides follow the 16:9 shape of the banner images, capped so they never fill the whole screen */
+.hero-slide.has-image {
+    aspect-ratio: 16 / 9;
+    max-height: 70vh;
+    width: 100%;
+}
+
+.hero-slide.has-image .hero-slide-content {
+    max-width: 30rem;
+    text-shadow: 0 1px 8px rgba(0, 0, 0, 0.35);
+}
+
+/* Phones: the banner is narrow, so shade the whole picture for readable text */
+@media (max-width: 576px) {
+    .hero-slide.has-image {
+        aspect-ratio: auto;
+        min-height: 320px;
+    }
+    .hero-slide.has-image::after {
+        background: linear-gradient(90deg, rgba(0, 0, 0, 0.6), rgba(0, 0, 0, 0.3));
+    }
+    /* Narrow screens: the picture is wider than the slide, so no fade is needed */
+    .hero-slide.has-image::before {
+        -webkit-mask-image: none;
+        mask-image: none;
+    }
+    .hero-slide h2 { font-size: 1.6rem; }
+}
+
 .category-tile {
     position: relative;
     border-radius: 0.5rem;
